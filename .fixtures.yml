@@ -3,3 +3,4 @@ fixtures:
     'contrail': "#{source_dir}"
   repositories:
     'stdlib': 'git://github.com/puppetlabs/puppetlabs-stdlib.git'
+    'inifile': 'git://github.com/puppetlabs/puppetlabs-inifile.git'
