@@ -22,7 +22,7 @@ Puppet::Type.type(:contrail_discovery_config).provide(
   end
 
   def self.file_path
-    '/etc/contrail/discovery.conf'
+    '/etc/contrail/contrail-discovery.conf'
   end
 
   # added for backwards compatibility with older versions
