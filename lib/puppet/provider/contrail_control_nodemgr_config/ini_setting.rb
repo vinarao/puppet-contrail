@@ -1,4 +1,4 @@
-Puppet::Type.type(:contrail_control_node_config).provide(
+Puppet::Type.type(:contrail_control_nodemgr_config).provide(
   :ini_setting,
   :parent => Puppet::Type.type(:ini_setting).provider(:ruby)
 ) do
@@ -22,7 +22,7 @@ Puppet::Type.type(:contrail_control_node_config).provide(
   end
 
   def self.file_path
-    '/etc/contrail/control-node.conf'
+    '/etc/contrail/contrail-control-nodemgr.conf'
   end
 
   # added for backwards compatibility with older versions
