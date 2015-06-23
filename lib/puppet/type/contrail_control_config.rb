@@ -1,9 +1,9 @@
-Puppet::Type.newtype(:contrail_control_node_config) do
+Puppet::Type.newtype(:contrail_control_config) do
 
   ensurable
 
   newparam(:name, :namevar => true) do
-    desc 'Section/setting name to manage from /etc/contrail/control-node.conf'
+    desc 'Section/setting name to manage from /etc/contrail/control-control.conf'
     newvalues(/\S+\/\S+/)
   end
 
