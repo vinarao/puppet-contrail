@@ -1,11 +1,11 @@
-Puppet::Type.type(:contrail_svc_monitor_config).provide(
+Puppet::Type.type(:contrail_device_manager_config).provide(
   :ini_setting,
   :parent => Puppet::Type.type(:ini_setting).provider(:ruby)
 ) do
 
   # the setting is always default
   # this if for backwards compat with the old puppet providers
-  # for svc_monitor_config
+  # for contrail_api_config
   def section
     resource[:name].split('/', 2).first
   end
@@ -22,7 +22,7 @@ Puppet::Type.type(:contrail_svc_monitor_config).provide(
   end
 
   def self.file_path
-    '/etc/contrail/contrail-svc-monitor.conf'
+    '/etc/contrail/contrail-device-manager.conf'
   end
 
   # added for backwards compatibility with older versions
