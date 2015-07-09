@@ -5,7 +5,7 @@ source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
 group :development, :unit_tests do
   gem 'puppetlabs_spec_helper',                :require => false
-  gem 'rspec-puppet', '2.0.1',                 :require => false
+  gem 'rspec-puppet', '2.2.0',                 :require => false
   gem 'puppet-blacksmith',                     :require => false
   gem 'puppet-lint-param-docs',                :require => false
   gem 'puppet-lint-absolute_classname-check',  :require => false
@@ -23,7 +23,8 @@ group :development, :unit_tests do
 end
 
 group :system_tests do
-  gem 'beaker-rspec',  :require => false
+  gem 'beaker-rspec',                  :require => false
+  gem 'beaker-puppet_install_helper',  :require => false
 end
 
 if facterversion = ENV['FACTER_GEM_VERSION']
