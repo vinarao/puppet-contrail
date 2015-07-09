@@ -10,7 +10,7 @@ require 'puppet-lint/tasks/puppet-lint'
 require 'puppet-syntax/tasks/puppet-syntax'
 
 TDIR = File.expand_path(File.dirname(__FILE__))
-NAME = "sbadia-#{File.basename(TDIR).split('-')[1]}"
+NAME = JSON.parse(open('metadata.json').read)['name'].split('-')[1]
 
 exclude_path = ["spec/**/*","pkg/**/*","vendor/**/*"]
 
