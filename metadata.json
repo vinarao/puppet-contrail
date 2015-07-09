@@ -1,5 +1,5 @@
 {
-  "name": "enovance-contrail",
+  "name": "eNovance-contrail",
   "version": "1.0.0",
   "author": "Yanis Guenane, Sebastien Badia, and eNovance Contributors",
   "summary": "Puppet module for Juniper OpenContrail",
