@@ -57,7 +57,7 @@
 #   Defaults {}
 #
 class contrail::vrouter::config (
-  $vhost_ip               = '127.0.0.1',
+  $vhost_ip               = $::ipaddress_eth1,
   $discovery_ip           = '127.0.0.1',
   $device                 = 'eth0',
   $kmod_path              = "/lib/modules/${::kernelrelease}/extra/net/vrouter/vrouter.ko",
@@ -76,10 +76,15 @@ class contrail::vrouter::config (
   include ::contrail::ctrl_details
   include ::contrail::service_token
 
-  validate_hash($vrouter_agent_config)
+  $ip_to_steal = getvar(regsubst("ipaddress_${compute_device}", '[.-]', '_', 'G'))
+  $control_network_dev = { "NETWORKS/control_network_ip" => { value => $ip_to_steal} }
+  $temphash = delete($vrouter_agent_config, "NETWORKS/control_network_ip")
+  $new_vrouter_agent_config = merge($temphash, $control_network_dev)
+
+  validate_hash($new_vrouter_agent_config)
   validate_hash($vrouter_nodemgr_config)
 
-  create_resources('contrail_vrouter_agent_config', $vrouter_agent_config)
+  create_resources('contrail_vrouter_agent_config', $new_vrouter_agent_config)
   create_resources('contrail_vrouter_nodemgr_config', $vrouter_nodemgr_config)
 
   file { '/etc/contrail/agent_param' :
@@ -97,16 +102,46 @@ class contrail::vrouter::config (
     content => "DISCOVERY=${discovery_ip}",
   }
 
+
   exec { '/bin/python /opt/contrail/utils/update_dev_net_config_files.py' :
     path => '/usr/bin',
     command => "/bin/python /opt/contrail/utils/update_dev_net_config_files.py \
-                 --vhost_ip ${vhost_ip} \
+                 --vhost_ip ${ip_to_steal} \
                  --dev ${device} \
                  --compute_dev ${device} \
                  --netmask ${netmask} \
                  --gateway ${gateway} \
                  --cidr ${vhost_ip}/${mask} \
                  --mac ${macaddr}",
+    creates => '/etc/sysconfig/network-scripts/ifcfg-vhost0'
   }
 
+  exec { 'save ifcfg-ethX unless it has an ip':
+    path    => '/usr/bin:/usr/sbin:/bin',
+    command => "cp /etc/sysconfig/network-scripts/ifcfg-${compute_device} /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
+    unless  => "grep -q IPADDR /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
+    creates => "/etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
+    logoutput => true
+  }
+
+  exec { 'copy contrailsave ifcfg to running':
+    path    => '/usr/bin:/usr/sbin:/bin',
+    command => "cp /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
+    onlyif  => [ "grep IPADDR /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
+                 "ls /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
+                 "ls /etc/sysconfig/network-scripts/ifcfg-vhost0" ],
+    logoutput => true
+  }
+
+  exec { 'restart network devices':
+    path    => '/usr/bin:/usr/sbin:/bin',
+    command => "systemctl stop supervisor-vrouter && \
+                rmmod vrouter && \
+                ifdown ${compute_device} && \
+                ifup ${compute_device} && \
+                systemctl start supervisor-vrouter",
+    unless  => "ping -c3 ${discovery_ip}",
+    #unless  => "ping -c3 8.8.8.9",
+    logoutput => true
+  }
 }
