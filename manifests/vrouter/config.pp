@@ -130,7 +130,8 @@ class contrail::vrouter::config (
     onlyif  => [ "grep IPADDR /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
                  "ls /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
                  "ls /etc/sysconfig/network-scripts/ifcfg-vhost0" ],
-    logoutput => true
+    logoutput => true,
+    notify => Exec['restart network devices'],
   }
 
   exec { 'restart network devices':
@@ -140,8 +141,7 @@ class contrail::vrouter::config (
                 ifdown ${compute_device} && \
                 ifup ${compute_device} && \
                 systemctl start supervisor-vrouter",
-    unless  => "ping -c3 ${discovery_ip}",
-    #unless  => "ping -c3 8.8.8.9",
+    #unless  => "ping -c3 ${discovery_ip}",
     logoutput => true
   }
 }
