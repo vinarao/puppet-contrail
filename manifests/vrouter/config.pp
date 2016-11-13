@@ -77,9 +77,13 @@ class contrail::vrouter::config (
   include ::contrail::service_token
 
   $ip_to_steal = getvar(regsubst("ipaddress_${compute_device}", '[.-]', '_', 'G'))
-  $control_network_dev = { "NETWORKS/control_network_ip" => { value => $ip_to_steal} }
-  $temphash = delete($vrouter_agent_config, "NETWORKS/control_network_ip")
-  $new_vrouter_agent_config = merge($temphash, $control_network_dev)
+  $control_network_dev = { 
+    "NETWORKS/control_network_ip" => { value => $ip_to_steal },
+    "VIRTUAL-HOST-INTERFACE/ip" => { value => "$ip_to_steal/$mask" }
+  }
+  $temphash1 = delete($vrouter_agent_config, "NETWORKS/control_network_ip")
+  $temphash2 = delete($vrouter_agent_config, "VIRTUAL-HOST-INTERFACE/ip")
+  $new_vrouter_agent_config = merge($temphash1, $temphash2, $control_network_dev)
 
   validate_hash($new_vrouter_agent_config)
   validate_hash($vrouter_nodemgr_config)
@@ -144,4 +148,19 @@ class contrail::vrouter::config (
     #unless  => "ping -c3 ${discovery_ip}",
     logoutput => true
   }
+
+  $ini_defaults = { 
+    'path' => '/etc/libvirt/qemu.conf', 
+     notify => Service['libvirtd'],
+  }
+  $qemuconf = { 
+    '' => {
+      'user' => '"root"',
+      'group' => '"root"',
+      'clear_emulator_capabilities' => '0',
+      'cgroup_device_acl' => '[ "/dev/null", "/dev/full", "/dev/zero", "/dev/random", "/dev/urandom", "/dev/ptmx", "/dev/kvm", "/dev/kqemu", "/dev/rtc", "/dev/hpet", "/dev/net/tun",]',
+    }
+  }
+  create_ini_settings($qemuconf, $ini_defaults)
+
 }
