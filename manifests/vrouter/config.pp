@@ -78,14 +78,11 @@ class contrail::vrouter::config (
 
   $ip_to_steal = getvar(regsubst("ipaddress_${compute_device}", '[.-]', '_', 'G'))
   $control_network_dev = { 
-    "NETWORKS/control_network_ip" => { value => $ip_to_steal },
-    "VIRTUAL-HOST-INTERFACE/ip" => { value => "$ip_to_steal/$mask" }
+    'NETWORKS/control_network_ip' => { value => ${ip_to_steal} },
+    'VIRTUAL-HOST-INTERFACE/ip' => { value => "${ip_to_steal}/{$mask}" }
   }
-  $temphash1 = delete($vrouter_agent_config, "NETWORKS/control_network_ip")
-  $temphash2 = delete($vrouter_agent_config, "VIRTUAL-HOST-INTERFACE/ip")
-  $new_vrouter_agent_config = merge($temphash1, $temphash2, $control_network_dev)
+  $new_vrouter_agent_config = merge($vrouter_agent_config, $control_network_dev)
 
-  validate_hash($new_vrouter_agent_config)
   validate_hash($vrouter_nodemgr_config)
 
   create_resources('contrail_vrouter_agent_config', $new_vrouter_agent_config)
@@ -118,7 +115,7 @@ class contrail::vrouter::config (
                  --cidr ${vhost_ip}/${mask} \
                  --mac ${macaddr}",
     creates => '/etc/sysconfig/network-scripts/ifcfg-vhost0'
-  }
+  } ->
 
   exec { 'save ifcfg-ethX unless it has an ip':
     path    => '/usr/bin:/usr/sbin:/bin',
@@ -126,26 +123,24 @@ class contrail::vrouter::config (
     unless  => "grep -q IPADDR /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
     creates => "/etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
     logoutput => true
-  }
+  } ->
 
   exec { 'copy contrailsave ifcfg to running':
     path    => '/usr/bin:/usr/sbin:/bin',
     command => "cp /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
     onlyif  => [ "grep IPADDR /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
-                 "ls /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
-                 "ls /etc/sysconfig/network-scripts/ifcfg-vhost0" ],
+                 "test -f /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
+                 'test -f /etc/sysconfig/network-scripts/ifcfg-vhost0' ],
     logoutput => true,
-    notify => Exec['restart network devices'],
-  }
+  } ->
 
   exec { 'restart network devices':
     path    => '/usr/bin:/usr/sbin:/bin',
-    command => "systemctl stop supervisor-vrouter && \
-                rmmod vrouter && \
-                ifdown ${compute_device} && \
-                ifup ${compute_device} && \
+    command => "systemctl stop supervisor-vrouter; \
+                rmmod vrouter; \
+                ifdown ${compute_device}; \
+                ifup ${compute_device}; \
                 systemctl start supervisor-vrouter",
-    #unless  => "ping -c3 ${discovery_ip}",
     logoutput => true
   }
 
