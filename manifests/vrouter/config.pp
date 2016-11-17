@@ -79,7 +79,7 @@ class contrail::vrouter::config (
   $ip_to_steal = getvar(regsubst("ipaddress_${compute_device}", '[.-]', '_', 'G'))
   $control_network_dev = { 
     'NETWORKS/control_network_ip' => { value => ${ip_to_steal} },
-    'VIRTUAL-HOST-INTERFACE/ip' => { value => "${ip_to_steal}/{$mask}" }
+    'VIRTUAL-HOST-INTERFACE/ip'   => { value => "${ip_to_steal}/{$mask}" }
   }
   $new_vrouter_agent_config = merge($vrouter_agent_config, $control_network_dev)
 
@@ -107,34 +107,34 @@ class contrail::vrouter::config (
   anchor { 'vrouter::config::end': }
 
   exec { 'update-net-config':
-    path    => [ '/usr/bin', '/usr/sbin', '/bin', '/sbin', ],
-    command => "python /opt/contrail/utils/update_dev_net_config_files.py \
-                 --vhost_ip ${ip_to_steal} \
-                 --dev ${device} \
-                 --compute_dev ${device} \
-                 --netmask ${netmask} \
-                 --gateway ${gateway} \
-                 --cidr ${vhost_ip}/${mask} \
-                 --mac ${macaddr}",
-    creates => '/etc/sysconfig/network-scripts/ifcfg-vhost0'
+    path      => [ '/usr/bin', '/usr/sbin', '/bin', '/sbin', ],
+    command   => "python /opt/contrail/utils/update_dev_net_config_files.py \
+                   --vhost_ip ${ip_to_steal} \
+                   --dev ${device} \
+                   --compute_dev ${device} \
+                   --netmask ${netmask} \
+                   --gateway ${gateway} \
+                   --cidr ${vhost_ip}/${mask} \
+                   --mac ${macaddr}",
+    creates   => '/etc/sysconfig/network-scripts/ifcfg-vhost0',
     subscribe => Anchor['vrouter::config::begin'],
     notify    => Anchor['vrouter::config::end'],
   } ~>
   exec { 'backup-eth-ifcfg':
     path        => [ '/usr/bin', '/usr/sbin', '/bin', '/sbin', ],
-    command => "cp /etc/sysconfig/network-scripts/ifcfg-${compute_device} /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
-    unless  => "grep -q IPADDR /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
-    creates => "/etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
+    command     => "cp /etc/sysconfig/network-scripts/ifcfg-${compute_device} /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
+    unless      => "grep -q IPADDR /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
+    creates     => "/etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
     logoutput   => 'on_failure',
     refreshonly => true,
   } 
 
   exec { 'restore-eth-ifcfg':
-    path    => [ '/usr/bin', '/usr/sbin', '/bin', '/sbin', ],
-    command => "cp /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
-    onlyif  => [ "grep IPADDR /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
-                 "test -f /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
-                 'test -f /etc/sysconfig/network-scripts/ifcfg-vhost0' ],
+    path      => [ '/usr/bin', '/usr/sbin', '/bin', '/sbin', ],
+    command   => "cp /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
+    onlyif    => [ "grep IPADDR /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
+                   "test -f /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
+                   'test -f /etc/sysconfig/network-scripts/ifcfg-vhost0' ],
     logoutput => 'on_failure',
     subscribe => Anchor['vrouter::config::begin'],
     notify    => Anchor['vrouter::config::end'],
@@ -152,17 +152,5 @@ class contrail::vrouter::config (
 
   # we should only restart the service after the ip config dance
   Anchor['vrouter::config::end'] ~> Service['supervisor-vrouter']
-
-
-#  exec { 'restart network devices':
-#    path    => '/usr/bin:/usr/sbin:/bin',
-#    command => "systemctl stop supervisor-vrouter; \
-#                rmmod vrouter; \
-#                ifdown ${compute_device}; \
-#                ifup ${compute_device}; \
-#                systemctl start supervisor-vrouter",
-#    logoutput => true
-#  }
-
 
 }
