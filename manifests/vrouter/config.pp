@@ -103,10 +103,12 @@ class contrail::vrouter::config (
     content => "DISCOVERY=${discovery_ip}",
   }
 
+  anchor { 'vrouter::config::begin': } ->
+  anchor { 'vrouter::config::end': }
 
-  exec { '/bin/python /opt/contrail/utils/update_dev_net_config_files.py' :
-    path => '/usr/bin',
-    command => "/bin/python /opt/contrail/utils/update_dev_net_config_files.py \
+  exec { 'update-net-config':
+    path    => [ '/usr/bin', '/usr/sbin', '/bin', '/sbin', ],
+    command => "/opt/contrail/utils/update_dev_net_config_files.py \
                  --vhost_ip ${ip_to_steal} \
                  --dev ${device} \
                  --compute_dev ${device} \
@@ -115,34 +117,52 @@ class contrail::vrouter::config (
                  --cidr ${vhost_ip}/${mask} \
                  --mac ${macaddr}",
     creates => '/etc/sysconfig/network-scripts/ifcfg-vhost0'
-  } ->
-
-  exec { 'save ifcfg-ethX unless it has an ip':
-    path    => '/usr/bin:/usr/sbin:/bin',
+    subscribe => Anchor['vrouter::config::begin'],
+    notify    => Anchor['vrouter::config::end'],
+  } ~>
+  exec { 'backup-eth-ifcfg':
+    path        => [ '/usr/bin', '/usr/sbin', '/bin', '/sbin', ],
     command => "cp /etc/sysconfig/network-scripts/ifcfg-${compute_device} /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
     unless  => "grep -q IPADDR /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
     creates => "/etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
-    logoutput => true
-  } ->
+    logoutput   => 'on_failure',
+    refreshonly => true,
+  } 
 
-  exec { 'copy contrailsave ifcfg to running':
-    path    => '/usr/bin:/usr/sbin:/bin',
+  exec { 'restore-eth-ifcfg':
+    path    => [ '/usr/bin', '/usr/sbin', '/bin', '/sbin', ],
     command => "cp /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
     onlyif  => [ "grep IPADDR /etc/sysconfig/network-scripts/ifcfg-${compute_device}",
                  "test -f /etc/sysconfig/network-scripts/ifcfg-${compute_device}.contrailsave",
                  'test -f /etc/sysconfig/network-scripts/ifcfg-vhost0' ],
-    logoutput => true,
-  } ->
+    logoutput => 'on_failure',
+    subscribe => Anchor['vrouter::config::begin'],
+    notify    => Anchor['vrouter::config::end'],
+  } 
 
-  exec { 'restart network devices':
-    path    => '/usr/bin:/usr/sbin:/bin',
-    command => "systemctl stop supervisor-vrouter; \
+  Service<| title == 'supervisor-vrouter' |> {
+    restart => "systemctl stop supervisor-vrouter; \
                 rmmod vrouter; \
                 ifdown ${compute_device}; \
                 ifup ${compute_device}; \
                 systemctl start supervisor-vrouter",
-    logoutput => true
+    stop    => "systemctl stop supervisor-vrouter; \
+                rmmod vrouter;", #TODO: not sure if should ifdown
   }
+
+  # we should only restart the service after the ip config dance
+  Anchor['vrouter::config::end'] ~> Service['supervisor-vrouter']
+
+
+#  exec { 'restart network devices':
+#    path    => '/usr/bin:/usr/sbin:/bin',
+#    command => "systemctl stop supervisor-vrouter; \
+#                rmmod vrouter; \
+#                ifdown ${compute_device}; \
+#                ifup ${compute_device}; \
+#                systemctl start supervisor-vrouter",
+#    logoutput => true
+#  }
 
 
 }
