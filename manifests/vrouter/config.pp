@@ -108,7 +108,7 @@ class contrail::vrouter::config (
 
   exec { 'update-net-config':
     path    => [ '/usr/bin', '/usr/sbin', '/bin', '/sbin', ],
-    command => "/opt/contrail/utils/update_dev_net_config_files.py \
+    command => "python /opt/contrail/utils/update_dev_net_config_files.py \
                  --vhost_ip ${ip_to_steal} \
                  --dev ${device} \
                  --compute_dev ${device} \
