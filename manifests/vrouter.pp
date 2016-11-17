@@ -15,7 +15,8 @@ class contrail::vrouter (
   class {'::contrail::vrouter::install': } ->
   class {'::contrail::vrouter::config': } ~>
   class {'::contrail::vrouter::service': } ->
-  class {'::contrail::vrouter::provision_vrouter': }
+  class {'::contrail::vrouter::provision_vrouter': } ->
+  class {'::contrail::qemu': }
   anchor {'contrail::vrouter::end': }
   
 }
