@@ -17,9 +17,9 @@
 #   (optional) cgroup_device_acl setting for qemu
 #
 class contrail::qemu (
-  $qemu_user = ‘“root”’,
-  $qemu_group = ‘”root”’,
-  $qemu_clear_emulator_capabilities = ‘0’,
+  $qemu_user = '\“root\”',
+  $qemu_group = '\”root\”',
+  $qemu_clear_emulator_capabilities = '0',
   $qemu_cgroup_device_acl = '[ "/dev/null", "/dev/full", "/dev/zero", "/dev/random", "/dev/urandom", "/dev/ptmx", "/dev/kvm", "/dev/kqemu", "/dev/rtc", "/dev/hpet", "/dev/net/tun",]',
 ) {
 

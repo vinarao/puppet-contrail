@@ -144,18 +144,5 @@ class contrail::vrouter::config (
     logoutput => true
   }
 
-  $ini_defaults = { 
-    'path' => '/etc/libvirt/qemu.conf', 
-     notify => Service['libvirtd'],
-  }
-  $qemuconf = { 
-    '' => {
-      'user' => '"root"',
-      'group' => '"root"',
-      'clear_emulator_capabilities' => '0',
-      'cgroup_device_acl' => '[ "/dev/null", "/dev/full", "/dev/zero", "/dev/random", "/dev/urandom", "/dev/ptmx", "/dev/kvm", "/dev/kqemu", "/dev/rtc", "/dev/hpet", "/dev/net/tun",]',
-    }
-  }
-  create_ini_settings($qemuconf, $ini_defaults)
 
 }
