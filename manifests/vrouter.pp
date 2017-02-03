@@ -50,5 +50,3 @@ class contrail::vrouter (
     vhost_ip           => $vhost_ip,
   }
   anchor {'contrail::vrouter::end': }
-
-}

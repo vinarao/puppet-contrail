@@ -102,20 +102,6 @@ class contrail::vrouter::config (
     command => '/sbin/weak-modules --add-kernel',
   }
   if $step == 5 and !$is_tsn {
-    ini_setting { "set custom cpu_mode":
-      ensure  => present,
-      path    => '/etc/nova/nova.conf',
-      section => 'libvirt',
-      setting => 'cpu_mode',
-      value   => 'custom',
-    }
-    ini_setting { "set cpu_model":
-      ensure  => present,
-      path    => '/etc/nova/nova.conf',
-      section => 'libvirt',
-      setting => 'cpu_model',
-      value   => 'Nehalem',
-    }
     file { '/nova_libvirt.patch' :
       ensure  => file,
       content => template('contrail/vrouter/nova_libvirt.patch.erb'),
