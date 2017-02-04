@@ -10,6 +10,9 @@
 class contrail::control::install (
 ) {
 
+  package { 'boost' :
+    ensure => installed,
+  }
   package { 'contrail-openstack-control' :
     ensure => installed,
   }
