@@ -37,9 +37,6 @@ class contrail::analyticsdatabase::config (
   validate_ipv4_address($cassandra_ip)
 
   file { ['/var/lib/cassandra', ]:
-#          '/var/lib/cassandra/data',
-#          '/var/lib/cassandra/saved_caches',
-#          '/var/lib/cassandra/commitlog', ]:
     ensure => 'directory',
     owner  => 'cassandra',
     group  => 'cassandra',
@@ -88,5 +85,81 @@ class contrail::analyticsdatabase::config (
     path => '/usr/share/kafka/config/server.properties',
     line => "broker.id=${kafka_broker_id}",
     match   => "^broker.id=.*$",
+  }
+  file_line { 'set kafka advertised.host.name':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "advertised.host.name=${::ipaddress}",
+  }
+  file_line { 'set kafka num.network.threads=3':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "num.network.threads=3",
+  }
+  file_line { 'set kafka num.io.threads=8':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "num.io.threads=8",
+  }
+  file_line { 'set kafka socket.send.buffer.bytes=102400':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "socket.send.buffer.bytes=102400",
+  }
+  file_line { 'set kafka socket.receive.buffer.bytes=102400':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "socket.receive.buffer.bytes=102400",
+  }
+  file_line { 'set kafka socket.request.max.bytes=104857600':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "socket.request.max.bytes=104857600",
+  }
+  file_line { 'set kafka socket.request.max.bytes=104857600':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "socket.request.max.bytes=104857600",
+  }
+  file_line { 'set kafka num.partitions=1':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "num.partitions=1",
+  }
+  file_line { 'set kafka num.recovery.threads.per.data.dir=1':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "num.recovery.threads.per.data.dir=1",
+  }
+  file_line { 'set kafka log.retention.hours=24':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "log.retention.hours=24",
+  }
+  file_line { 'set kafka log.retention.bytes=268435456':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "log.retention.bytes=268435456",
+  }
+  file_line { 'set kafka log.segment.bytes=268435456':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "log.segment.bytes=268435456",
+  }
+  file_line { 'set kafka log.retention.check.interval.ms=300000':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "log.retention.check.interval.ms=300000",
+  }
+  file_line { 'set kafka zookeeper.connection.timeout.ms=6000':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "zookeeper.connection.timeout.ms=6000",
+  }
+  file_line { 'set kafka log.cleanup.policy=delete':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "log.cleanup.policy=delete",
+  }
+  file_line { 'set kafka delete.topic.enable=true':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "delete.topic.enable=true",
+  }
+  file_line { 'set kafka log.cleaner.threads=2':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "log.cleaner.threads=2",
+  }
+  file_line { 'set kafka log.cleaner.dedupe.buffer.size=250000000':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "log.cleaner.dedupe.buffer.size=250000000",
+  }
+  file_line { 'set kafka default.replication.factor=2':
+    path => '/usr/share/kafka/config/server.properties',
+    line => "default.replication.factor=2",
   }
 }
