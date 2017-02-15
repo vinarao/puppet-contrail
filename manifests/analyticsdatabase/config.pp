@@ -110,10 +110,6 @@ class contrail::analyticsdatabase::config (
     path => '/usr/share/kafka/config/server.properties',
     line => "socket.request.max.bytes=104857600",
   }
-  file_line { 'set kafka socket.request.max.bytes=104857600':
-    path => '/usr/share/kafka/config/server.properties',
-    line => "socket.request.max.bytes=104857600",
-  }
   file_line { 'set kafka num.partitions=1':
     path => '/usr/share/kafka/config/server.properties',
     line => "num.partitions=1",
