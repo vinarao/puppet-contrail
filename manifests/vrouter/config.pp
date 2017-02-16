@@ -121,7 +121,7 @@ class contrail::vrouter::config (
 
   file { '/etc/contrail/default_pmac' :
     ensure  => file,
-    source => $macaddr,
+    content => $macaddr,
   }
 
   file { '/etc/contrail/contrailnetns.te' :
