@@ -16,15 +16,8 @@ class contrail::database::install (
   package { 'java-1.8.0-openjdk' :
     ensure => installed,
   } ->
-  package { 'contrail-openstack-database' :
+#  package { 'contrail-openstack-database' :
+  package { 'contrail-database' :
     ensure => installed,
   }
-#  } ->
-#  exec { 'stop contrail-database service':
-#      command => '/bin/systemctl stop contrail-database',
-#  } ->
-#  exec { 'rm -rf /var/lib/cassandra/data/*' :
-#    path => '/bin',
-#  }
-
 }
