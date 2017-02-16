@@ -43,7 +43,7 @@ class contrail::control::config (
 
   $contrail_control_config         = { 'path' => '/etc/contrail/contrail-control.conf' }
   $contrail_control_nodemgr_config = { 'path' => '/etc/contrail/contrail-control-nodemgr.conf' }
-  $contrail_dns_config             = { 'path' => '/etc/contrail/dns/contrail-dns.conf' }
+  $contrail_dns_config             = { 'path' => '/etc/contrail/contrail-dns.conf' }
 
   create_ini_settings($control_config, $contrail_control_config)
   create_ini_settings($control_nodemgr_config, $contrail_control_nodemgr_config)
