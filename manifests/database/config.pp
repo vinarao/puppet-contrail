@@ -78,15 +78,6 @@ class contrail::database::config (
 
   file {['/usr/lib', '/usr/lib/zookeeper', '/usr/lib/zookeeper/bin/']:
     ensure => directory
-  }
-
-  file_line { 'adjust zookeeper service':
-    path => '/etc/rc.d/init.d/zookeeper',
-    line => "ZOOCFGDIR=/etc/zookeeper/conf",
-    match   => "^ZOOCFGDIR=.*$",
-  } ->
-  exec { 'systemctl daemon-reload':
-    path => '/bin',
   } ->
   class {'::zookeeper':
     servers   => $zookeeper_server_ips,
@@ -95,5 +86,13 @@ class contrail::database::config (
     cfg_dir   => '/etc/zookeeper/conf',
     packages  => $packages,
     service_name => $service_name,
+  } ->
+  file_line { 'adjust zookeeper service':
+    path => '/etc/rc.d/init.d/zookeeper',
+    line => "ZOOCFGDIR=/etc/zookeeper/conf",
+    match   => "^ZOOCFGDIR=.*$",
+  } ->
+  exec { 'systemctl daemon-reload':
+    path => '/bin',
   }
 }
