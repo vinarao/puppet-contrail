@@ -126,7 +126,7 @@ class contrail::vrouter::config (
 
   file { '/etc/contrail/contrailnetns.te' :
     ensure  => file,
-    content => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/contrailnetns.te',
+    source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/contrailnetns.te',
   } ->
   exec { 'checkmodule -M -m -o /etc/contrail/contrailnetns.mod /etc/contrail/contrailnetns.te':
     command => '/bin/checkmodule -M -m -o /etc/contrail/contrailnetns.mod /etc/contrail/contrailnetns.te',
