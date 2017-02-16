@@ -13,9 +13,13 @@ class contrail::database::service {
     ensure => running,
     enable => true,
   }
-  service {'supervisor-database' :
-    ensure => stopped,
+  service {'zookeeper' :
+    ensure => running,
     enable => false,
   }
+#  service {'supervisor-database' :
+#    ensure => stopped,
+#    enable => false,
+#  }
 
 }

@@ -17,6 +17,9 @@ class contrail::database::install (
     ensure => installed,
   } ->
 #  package { 'contrail-openstack-database' :
+  package { 'zookeeper' :
+    ensure => installed,
+  }
   package { 'contrail-database' :
     ensure => installed,
   }
