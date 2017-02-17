@@ -11,7 +11,7 @@ class contrail::webui::install (
 ) {
 
   package { 'contrail-openstack-webui' :
-    ensure => installed,
+    ensure => latest,
   }
 
 }

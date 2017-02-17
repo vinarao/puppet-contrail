@@ -11,7 +11,7 @@ class contrail::vrouter::install (
 ) {
 
   package { 'contrail-openstack-vrouter' :
-    ensure => installed,
+    ensure => latest,
   }
 
   #file { '/opt/contrail/utils/update_dev_net_config_files.py' :

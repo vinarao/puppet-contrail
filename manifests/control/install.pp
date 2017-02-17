@@ -11,10 +11,10 @@ class contrail::control::install (
 ) {
 
   package { 'boost' :
-    ensure => installed,
+    ensure => latest,
   }
   package { 'contrail-openstack-control' :
-    ensure => installed,
+    ensure => latest,
   }
 
 }

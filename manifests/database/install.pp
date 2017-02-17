@@ -11,16 +11,16 @@ class contrail::database::install (
 ) {
 
   package { 'wget' :
-    ensure => installed,
+    ensure => latest,
   } ->
   package { 'java-1.8.0-openjdk' :
-    ensure => installed,
+    ensure => latest,
   } ->
 #  package { 'contrail-openstack-database' :
 #  package { 'zookeeper' :
-#    ensure => installed,
+#    ensure => latest,
 #  }
   package { 'contrail-database' :
-    ensure => installed,
+    ensure => latest,
   }
 }
