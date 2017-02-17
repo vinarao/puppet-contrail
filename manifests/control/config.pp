@@ -58,7 +58,13 @@ class contrail::control::config (
   } else {
     $forwarders_option = ''
   }
-
+  file {'/etc/ld.so.conf.d/contrail.conf':
+    ensure => file,
+    content => '/usr/lib',
+  } ->
+  exec { '/sbin/ldconfig':
+    command => '/sbin/ldconfig',
+  }
   if $manage_named_conf {
     file { '/etc/contrail/dns/contrail-named.conf' :
       ensure  => file,
