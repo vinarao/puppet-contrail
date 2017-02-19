@@ -11,6 +11,7 @@ class contrail::vrouter (
   $discovery_ip,
   $gateway,
   $host_ip,
+  $is_dpdk,
   $is_tsn,
   $netmask,
   $macaddr,
@@ -25,12 +26,15 @@ class contrail::vrouter (
 ) inherits contrail::params {
 
   anchor {'contrail::vrouter::start': } ->
-  class {'::contrail::vrouter::install': } ->
+  class {'::contrail::vrouter::install': 
+    is_dpdk => $is_dpdk,
+  } ->
   class {'::contrail::vrouter::config':
     compute_device         => $physical_interface,
     device                 => $physical_interface,
     discovery_ip           => $discovery_ip,
     gateway                => $gateway,
+    is_dpdk                => $is_dpdk,
     is_tsn                 => $is_tsn,
     macaddr                => $macaddr,
     mask                   => $mask,

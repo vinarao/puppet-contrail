@@ -57,12 +57,13 @@
 #   Defaults {}
 #
 class contrail::vrouter::config (
-  $step = hiera('step'),
+  $step                   = hiera('step'),
   $compute_device         = 'eth0',
   $discovery_ip           = '127.0.0.1',
   $device                 = 'eth0',
   $gateway                = '127.0.0.1',
   $is_tsn                 = undef,
+  $is_dpdk                = undef,
   $kmod_path              = "vrouter",
   $macaddr                = $::macaddress,
   $mask                   = '24',
@@ -82,6 +83,57 @@ class contrail::vrouter::config (
 #
   file { '/etc/contrail/contrail-keystone-auth.conf':
     ensure => file,
+  }
+  if $step == 1 and $is_dpdk {
+    file_line { 'net.ipv4.tcp_keepalive_time = 5':
+      ensure => present,
+      path   => '/etc/sysctl.conf',
+      line   => 'net.ipv4.tcp_keepalive_time = 5',
+    } ->
+    file_line { 'net.ipv4.tcp_keepalive_probes = 5':
+      ensure => present,
+      path   => '/etc/sysctl.conf',
+      line   => 'net.ipv4.tcp_keepalive_probes = 5',
+    } ->
+    file_line { 'net.ipv4.tcp_keepalive_intvl = 1':
+      ensure => present,
+      path   => '/etc/sysctl.conf',
+      line   => 'net.ipv4.tcp_keepalive_intvl = 1',
+    } ->
+    file_line { 'vm.nr_hugepages = 64480':
+      ensure => present,
+      path   => '/etc/sysctl.conf',
+      line   => 'vm.nr_hugepages = 64480',
+    } ->
+    file_line { 'vm.max_map_count = 128960':
+      ensure => present,
+      path   => '/etc/sysctl.conf',
+      line   => 'vm.max_map_count = 128960',
+    } ->
+    file_line { 'kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t':
+      ensure => present,
+      path   => '/etc/sysctl.conf',
+      line   => 'kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t',
+    } ->
+    exec {'/sbin/sysctl --system':
+      command => '/sbin/sysctl --system',
+    }
+    file {'/etc/contrail/vnagent_ExecStartPost.sh':
+      ensure => file,
+      source => '/etc/contrail/dpdk/vnagent_ExecStartPost.sh',
+    }
+    file {'/etc/contrail/vnagent_ExecStartPre.sh':
+      ensure => file,
+      source => '/etc/contrail/dpdk/vnagent_ExecStartPre.sh',
+    }
+    file {'/etc/contrail/vnagent_ExecStopPost.sh':
+      ensure => file,
+      source => '/etc/contrail/dpdk/vnagent_ExecStopPost.sh',
+    }
+    file {'/etc/contrail/supervisord_vrouter_files/contrail-vrouter-dpdk.ini':
+      ensure => file,
+      source => '/etc/contrail/dpdk/contrail-vrouter-dpdk.ini',
+    }
   }
 
   validate_hash($vrouter_agent_config)

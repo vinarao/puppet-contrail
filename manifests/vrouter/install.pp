@@ -8,8 +8,13 @@
 #   (optional) Package name for vrouter
 #
 class contrail::vrouter::install (
+  $is_dpdk = undef,
 ) {
-
+  if $is_dpdk {
+    package { 'liburcu2':
+      ensure => installed,
+    }
+  }
   package { 'contrail-openstack-vrouter' :
     ensure => latest,
   }
