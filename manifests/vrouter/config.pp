@@ -134,6 +134,12 @@ class contrail::vrouter::config (
       ensure => file,
       source => '/etc/contrail/dpdk/contrail-vrouter-dpdk.ini',
     }
+    file_line { 'patch vrouter-functions.sh':
+      ensure => present,
+      path   => '/opt/contrail/bin/vrouter-functions.sh',
+      line   => '    eval `cat ${AGENT_CONF} | grep \'^[a-zA-Z]\'`| sed \'s/[[:space:]]//g\'',
+      match  => '^\ \ \ \ eval `cat ${AGENT_CONF} | grep \'^[a-zA-Z]\'`',
+    }
   }
 
   validate_hash($vrouter_agent_config)
