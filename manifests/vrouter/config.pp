@@ -137,8 +137,8 @@ class contrail::vrouter::config (
     file_line { 'patch vrouter-functions.sh':
       ensure => present,
       path   => '/opt/contrail/bin/vrouter-functions.sh',
-      line   => '    eval `cat ${AGENT_CONF} | grep \'^[a-zA-Z]\'`| sed \'s/[[:space:]]//g\'',
-      match  => '^\ \ \ \ eval `cat ${AGENT_CONF} | grep \'^[a-zA-Z]\'`',
+      line   => '    eval `cat ${AGENT_CONF} | grep \'^[a-zA-Z]\'| sed \'s/[[:space:]]//g\'`',
+      match  => '^\ \ \ \ eval `cat \${AGENT_CONF} | grep \'^[a-zA-Z]\'`',
     }
   }
 
