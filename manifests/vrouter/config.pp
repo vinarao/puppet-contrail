@@ -159,6 +159,9 @@ class contrail::vrouter::config (
   exec { '/sbin/weak-modules --add-kernel' :
     command => '/sbin/weak-modules --add-kernel',
   }
+  group { 'nogroup':
+      ensure => present,
+  }
   if $step == 5 and !$is_tsn {
     file { '/nova_libvirt.patch' :
       ensure  => file,
