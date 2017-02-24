@@ -140,6 +140,19 @@ class contrail::vrouter::config (
   exec { 'semodule -i /etc/contrail/contrailnetns.pp':
     command => '/sbin/semodule -i /etc/contrail/contrailnetns.pp',
   }
+  file { '/etc/contrail/contrailhaproxy.te' :
+    ensure  => file,
+    source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/contrailhaproxy.te',
+  } ->
+  exec { 'checkmodule -M -m -o /etc/contrail/contrailhaproxy.mod /etc/contrail/contrailhaproxy.te':
+    command => '/bin/checkmodule -M -m -o /etc/contrail/contrailhaproxy.mod /etc/contrail/contrailhaproxy.te',
+  } ->
+  exec { 'semodule_package -o /etc/contrail/contrailhaproxy.pp -m /etc/contrail/contrailhaproxy.mod':
+    command => '/bin/semodule_package -o /etc/contrail/contrailhaproxy.pp -m /etc/contrail/contrailhaproxy.mod',
+  } ->
+  exec { 'semodule -i /etc/contrail/contrailhaproxy.pp':
+    command => '/sbin/semodule -i /etc/contrail/contrailhaproxy.pp',
+  }
 
   file { '/etc/contrail/vrouter_nodemgr_param' :
     ensure  => file,
