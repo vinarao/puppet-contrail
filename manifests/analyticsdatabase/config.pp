@@ -28,8 +28,10 @@ class contrail::analyticsdatabase::config (
   $cassandra_seeds_list = $cassandra_servers[0,2]
   if $cassandra_seeds_list.size > 1 {
     $cassandra_seeds = join($cassandra_seeds_list,",")
+    $kafka_replication = '2'
   } else {
     $cassandra_seeds = $cassandra_seeds_list[0]
+    $kafka_replication = '1'
   }
 
   create_ini_settings($database_nodemgr_config, $contrail_database_nodemgr_config)
@@ -154,8 +156,8 @@ class contrail::analyticsdatabase::config (
     path => '/usr/share/kafka/config/server.properties',
     line => "log.cleaner.dedupe.buffer.size=250000000",
   }
-  file_line { 'set kafka default.replication.factor=2':
+  file_line { 'set kafka default.replication.factor=':
     path => '/usr/share/kafka/config/server.properties',
-    line => "default.replication.factor=2",
+    line => "default.replication.factor=${kafka_replication}",
   }
 }
