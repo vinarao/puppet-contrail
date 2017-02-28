@@ -160,27 +160,6 @@ def migrate_routes(device):
     '''
     with open('/etc/sysconfig/network-scripts/route-vhost0',
               'w') as route_cfg_file:
-        for route in open('/proc/net/route', 'r').readlines():
-            if route.startswith(device):
-                route_fields = route.split()
-                destination = int(route_fields[1], 16)
-                gateway = int(route_fields[2], 16)
-                flags = int(route_fields[3], 16)
-                mask = int(route_fields[7], 16)
-                if flags & 0x2:
-                    if destination != 0:
-                        route_cfg_file.write(
-                            socket.inet_ntoa(struct.pack('I', destination)))
-                        route_cfg_file.write(
-                            '/' + str(bin(mask).count('1')) + ' ')
-                        route_cfg_file.write('via ')
-                        route_cfg_file.write(
-                            socket.inet_ntoa(struct.pack('I', gateway)) + ' ')
-                        route_cfg_file.write('dev vhost0\n')
-                    # end if detination...
-                # end if flags &...
-            # end if route.startswith...
-        # end for route...
         if os.stat('/etc/sysconfig/network-scripts/route-vhost0').st_size == 0:
             for route in open('/etc/sysconfig/network-scripts/route-'+device):
                 route_fields = route.split()
