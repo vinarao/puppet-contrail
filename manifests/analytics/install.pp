@@ -13,9 +13,6 @@ class contrail::analytics::install (
   package { 'wget' :
     ensure => latest,
   }
-  package { 'python-redis' :
-    ensure => absent,
-  } ->
   package { 'contrail-openstack-analytics' :
     ensure => latest,
   }
