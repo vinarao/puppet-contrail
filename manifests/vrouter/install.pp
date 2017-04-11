@@ -28,6 +28,10 @@ class contrail::vrouter::install (
     package { 'contrail-utils' :
       ensure => latest,
     }
+    file { '/etc/contrail/vnagent_ExecStartPost.sh' :
+      ensure => file,
+      source => '/opt/contrail/bin/vnagent_ExecStartPost.sh',
+    }
   }
 
   #file { '/opt/contrail/utils/update_dev_net_config_files.py' :
