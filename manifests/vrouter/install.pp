@@ -28,6 +28,9 @@ class contrail::vrouter::install (
     package { 'contrail-utils' :
       ensure => latest,
     }
+    package { 'contrail-setup' :
+      ensure => latest,
+    }
     file { '/etc/contrail/vnagent_ExecStartPost.sh' :
       ensure => file,
       source => '/opt/contrail/bin/vnagent_ExecStartPost.sh',
