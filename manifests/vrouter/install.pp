@@ -32,6 +32,9 @@ class contrail::vrouter::install (
       ensure => file,
       source => '/opt/contrail/bin/vnagent_ExecStartPost.sh',
     }
+    exec { 'ldconfig vrouter agent':
+      command => '/sbin/ldconfig',
+    }
   }
 
   #file { '/opt/contrail/utils/update_dev_net_config_files.py' :
