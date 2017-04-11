@@ -63,6 +63,7 @@ class contrail::vrouter::config (
   $device                 = 'eth0',
   $gateway                = '127.0.0.1',
   $is_tsn                 = undef,
+  $is_dpdk                = undef,
   $kmod_path              = "vrouter",
   $macaddr                = $::macaddress,
   $mask                   = '24',
@@ -154,9 +155,11 @@ class contrail::vrouter::config (
     command => '/sbin/semodule -i /etc/contrail/contrailhaproxy.pp',
   }
 
-  file { '/etc/contrail/vrouter_nodemgr_param' :
-    ensure  => file,
-    content => "DISCOVERY=${discovery_ip}",
+  if !$is_dpdk {
+    file { '/etc/contrail/vrouter_nodemgr_param' :
+      ensure  => file,
+      content => "DISCOVERY=${discovery_ip}",
+    }
   }
   if $::ipaddress_vhost0 != $vhost_ip {
     file { '/opt/contrail/utils/update_dev_net_config_files.py':

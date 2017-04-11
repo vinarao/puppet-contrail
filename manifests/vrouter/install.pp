@@ -8,10 +8,26 @@
 #   (optional) Package name for vrouter
 #
 class contrail::vrouter::install (
+  $is_dpdk = undef,
 ) {
 
-  package { 'contrail-openstack-vrouter' :
-    ensure => latest,
+  if !$is_dpdk {
+    package { 'contrail-openstack-vrouter' :
+      ensure => latest,
+    }
+  } else {
+    package { 'contrail-lib' :
+      ensure => latest,
+    }
+    package { 'contrail-nodemgr' :
+      ensure => latest,
+    }
+    package { 'contrail-vrouter-agent' :
+      ensure => latest,
+    }
+    package { 'contrail-utils' :
+      ensure => latest,
+    }
   }
 
   #file { '/opt/contrail/utils/update_dev_net_config_files.py' :
