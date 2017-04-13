@@ -35,6 +35,10 @@ class contrail::vrouter::install (
       ensure => file,
       source => '/opt/contrail/bin/vnagent_ExecStartPost.sh',
     }
+    file { '/etc/contrail/vnagent_ExecStartPre.sh' :
+      ensure => file,
+      source => '/opt/contrail/bin/vnagent_ExecStartPre.sh',
+    }
     exec { 'ldconfig vrouter agent':
       command => '/sbin/ldconfig',
     }
