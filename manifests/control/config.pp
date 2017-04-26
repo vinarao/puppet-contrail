@@ -25,11 +25,11 @@
 #
 class contrail::control::config (
   $secret,
-  $forwarder              = '8.8.8.8',
   $dns_config             = {},
-  $manage_named_conf      = true,
   $control_config         = {},
   $control_nodemgr_config = {},
+  $manage_named           = 'true',
+  $forwarder              = '8.8.8.8',
 ) {
 
 #  include ::contrail::vnc_api
@@ -48,7 +48,6 @@ class contrail::control::config (
   create_ini_settings($control_config, $contrail_control_config)
   create_ini_settings($control_nodemgr_config, $contrail_control_nodemgr_config)
   create_ini_settings($dns_config, $contrail_dns_config)
-
   if $forwarder {
     if is_array($forwarder) {
       $forwarders_option = join([join($forwarder, ';'),';'], '')
@@ -58,14 +57,7 @@ class contrail::control::config (
   } else {
     $forwarders_option = ''
   }
-  file {'/etc/ld.so.conf.d/contrail.conf':
-    ensure => file,
-    content => '/usr/lib',
-  } ->
-  exec { '/sbin/ldconfig':
-    command => '/sbin/ldconfig',
-  }
-  if $manage_named_conf {
+  if $manage_named == 'true' {
     file { '/etc/contrail/dns/contrail-named.conf' :
       ensure  => file,
       content => template('contrail/contrail-named.conf.erb'),
