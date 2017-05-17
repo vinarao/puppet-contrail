@@ -31,10 +31,6 @@ class contrail::vrouter::install (
     package { 'contrail-setup' :
       ensure => latest,
     }
-    file { '/etc/contrail/vnagent_ExecStartPost.sh' :
-      ensure => file,
-      source => '/opt/contrail/bin/vnagent_ExecStartPost.sh',
-    }
     exec { 'ldconfig vrouter agent':
       command => '/sbin/ldconfig',
     }
