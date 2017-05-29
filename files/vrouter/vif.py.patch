@@ -1,0 +1,20 @@
+--- /usr/lib/python2.7/site-packages/nova/virt/libvirt/vif.py.orig	2017-05-29 18:52:18.425563012 +0000
++++ /usr/lib/python2.7/site-packages/nova/virt/libvirt/vif.py	2017-05-29 18:54:06.321358804 +0000
+@@ -25,6 +25,7 @@
+ from os_vif import exception as osv_exception
+ from oslo_concurrency import processutils
+ from oslo_log import log as logging
++from oslo_config import cfg
+ 
+ import nova.conf
+ from nova import exception
+@@ -426,6 +427,9 @@
+         designer.set_vif_bandwidth_config(conf, inst_type)
+         return conf
+ 
++    def _set_config_VIFVHostUser(self, instance, vif, conf, host=None):
++        designer.set_vif_host_backend_vhostuser_config(conf, vif.mode, vif.path)
++
+     def _set_config_VIFBridge(self, instance, vif, conf, host=None):
+         conf.net_type = "bridge"
+         conf.source_dev = vif.bridge_name
