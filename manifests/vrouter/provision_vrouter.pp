@@ -41,6 +41,7 @@ class contrail::vrouter::provision_vrouter (
   $api_port                   = 8082,
   $host_ip                    = $::ipaddress,
   $is_tsn                     = undef,
+  $is_dpdk                    = undef,
   $node_name                  = $::hostname,
   $keystone_admin_user        = 'admin',
   $keystone_admin_password    = 'password',
@@ -66,7 +67,7 @@ class contrail::vrouter::provision_vrouter (
       tries => 100,
       try_sleep => 3,
     }
-  } else {
+  } elsif $is_tsn {
     exec { "provision_vrouter.py ${node_name}" :
       path => '/usr/bin',
       command => "python /opt/contrail/utils/provision_vrouter.py \
@@ -78,6 +79,22 @@ class contrail::vrouter::provision_vrouter (
                    --admin_password ${keystone_admin_password} \
                    --admin_tenant ${keystone_admin_tenant_name} \
                    --router_type tor-service-node \
+                   --oper ${oper}",
+      tries => 100,
+      try_sleep => 3,
+    }
+  } elsif $is_dpdk {
+    exec { "provision_vrouter.py ${node_name}" :
+      path => '/usr/bin',
+      command => "python /opt/contrail/utils/provision_vrouter.py \
+                   --host_name ${::fqdn} \
+                   --host_ip ${host_ip} \
+                   --api_server_ip ${api_address} \
+                   --api_server_port ${api_port} \
+                   --admin_user ${keystone_admin_user} \
+                   --admin_password ${keystone_admin_password} \
+                   --admin_tenant ${keystone_admin_tenant_name} \
+                   --dpdk_enabled \
                    --oper ${oper}",
       tries => 100,
       try_sleep => 3,
