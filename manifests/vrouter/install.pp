@@ -34,12 +34,12 @@ class contrail::vrouter::install (
     exec { 'ldconfig vrouter agent':
       command => '/sbin/ldconfig',
     }
+    exec { 'set selinux to permissive' :
+      command => '/sbin/setenforce permissive',
+    }
   }
   exec { '/sbin/weak-modules --add-kernel' :
     command => '/sbin/weak-modules --add-kernel',
-  }
-  exec { 'set selinux to permissive' :
-    command => '/sbin/setenforce permissive',
   }
   group { 'nogroup':
       ensure => present,
