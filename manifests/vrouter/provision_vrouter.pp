@@ -52,7 +52,7 @@ class contrail::vrouter::provision_vrouter (
   #  path => '/usr/bin',
   #  command => "/usr/bin/wget --spider --tries 150 --waitretry=2 --retry-connrefused http://${api_address}:8082",
   #} ->
-  if !$is_tsn {
+  if $is_dpdk {
     exec { "provision_vrouter.py ${node_name}" :
       path => '/usr/bin',
       command => "python /opt/contrail/utils/provision_vrouter.py \
@@ -63,6 +63,7 @@ class contrail::vrouter::provision_vrouter (
                    --admin_user ${keystone_admin_user} \
                    --admin_password ${keystone_admin_password} \
                    --admin_tenant ${keystone_admin_tenant_name} \
+                   --dpdk_enabled \
                    --oper ${oper}",
       tries => 100,
       try_sleep => 3,
@@ -78,12 +79,11 @@ class contrail::vrouter::provision_vrouter (
                    --admin_user ${keystone_admin_user} \
                    --admin_password ${keystone_admin_password} \
                    --admin_tenant ${keystone_admin_tenant_name} \
-                   --router_type tor-service-node \
                    --oper ${oper}",
       tries => 100,
       try_sleep => 3,
     }
-  } elsif $is_dpdk {
+  } else {
     exec { "provision_vrouter.py ${node_name}" :
       path => '/usr/bin',
       command => "python /opt/contrail/utils/provision_vrouter.py \
@@ -94,7 +94,7 @@ class contrail::vrouter::provision_vrouter (
                    --admin_user ${keystone_admin_user} \
                    --admin_password ${keystone_admin_password} \
                    --admin_tenant ${keystone_admin_tenant_name} \
-                   --dpdk_enabled \
+                   --router_type tor-service-node \
                    --oper ${oper}",
       tries => 100,
       try_sleep => 3,

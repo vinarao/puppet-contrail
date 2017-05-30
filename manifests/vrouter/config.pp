@@ -111,6 +111,30 @@ class contrail::vrouter::config (
       match  => '^\ \ \ \ conf.script\ \=',
     }
   }
+  
+  if $is_dpdk {
+    ini_setting { "libvirt_vif_driver":
+      ensure  => present,
+      path    => '/etc/nova/nova.conf',
+      section => 'DEFAULT',
+      setting => 'libvirt_vif_driver',
+      value   => 'nova_contrail_vif.contrailvif.VRouterVIFDriver',
+    }
+    ini_setting { "use_userspace_vhost":
+      ensure  => present,
+      path    => '/etc/nova/nova.conf',
+      section => 'CONTRAIL',
+      setting => 'use_userspace_vhost',
+      value   => 'true',
+    }
+    ini_setting { "use_huge_pages":
+      ensure  => present,
+      path    => '/etc/nova/nova.conf',
+      section => 'LIBVIRT',
+      setting => 'use_huge_pages',
+      value   => 'true',
+    }
+  }
 
   file { '/etc/contrail/agent_param' :
     ensure  => file,

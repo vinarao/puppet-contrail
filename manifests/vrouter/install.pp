@@ -37,26 +37,16 @@ class contrail::vrouter::install (
     exec { 'set selinux to permissive' :
       command => '/sbin/setenforce permissive',
     }
-    file {'/model.py.patch' :
+    file {'/etc/contrail/supervisord_vrouter_files/contrail-vrouter.rules' :
       ensure  => file,
-      source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/model.py.patch',
-    } ->
-    file {'/os_vif_util.py.patch' :
+      source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/contrail-vrouter.rules',
+    } 
+    file {'/nova.diff' :
       ensure  => file,
-      source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/os_vif_util.py.patch',
+      source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/nova.diff',
     } ->
-    file {'/vif.py.patch' :
-      ensure  => file,
-      source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/vif.py.patch',
-    } ->
-    exec { 'patch -p0 < model.py.patch':
-      command => '/bin/patch -p0 < /model.py.patch',
-    } ->
-    exec { 'patch -p0 < os_vif_util.py.patch':
-      command => '/bin/patch -p0 < /os_vif_util.py.patch',
-    } ->
-    exec { 'patch -p0 < vif.py.patch':
-      command => '/bin/patch -p0 < /vif.py.patch',
+    exec { 'patch -p0 < nova.diff':
+      command => '/bin/patch -p0 < /nova.diff || /bin/true',
     }
   }
   exec { '/sbin/weak-modules --add-kernel' :
