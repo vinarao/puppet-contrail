@@ -37,6 +37,18 @@ class contrail::vrouter::install (
     exec { 'set selinux to permissive' :
       command => '/sbin/setenforce permissive',
     }
+    file {'/etc/contrail/supervisord_vrouter_files/contrail-vrouter.rules' :
+      ensure  => file,
+      source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/contrail-vrouter.rules',
+    } 
+    file {'/nova_contrail_dpdk.patch' :
+      ensure  => file,
+      source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/nova_contrail_dpdk.patch',
+    } ->
+    exec { 'patch -p0 < nova_contrail_dpdk.patch':
+      command => '/bin/patch -p0 < /nova_contrail_dpdk.patch || /bin/true',
+      cwd => '/',
+    }
   }
   exec { '/sbin/weak-modules --add-kernel' :
     command => '/sbin/weak-modules --add-kernel',
