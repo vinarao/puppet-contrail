@@ -16,6 +16,9 @@ class contrail::analytics::install (
   package { 'python-redis' :
     ensure => absent,
   } ->
+  package { 'python-gevent' :
+    ensure => latest,
+  } ->
   package { 'contrail-openstack-analytics' :
     ensure => latest,
   }
