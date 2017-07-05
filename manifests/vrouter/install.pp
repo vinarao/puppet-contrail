@@ -41,14 +41,14 @@ class contrail::vrouter::install (
       ensure  => file,
       source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/contrail-vrouter.rules',
     } 
-    file {'/nova_contrail_dpdk.patch' :
-      ensure  => file,
-      source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/nova_contrail_dpdk.patch',
-    } ->
-    exec { 'patch -p0 < nova_contrail_dpdk.patch':
-      command => '/bin/patch -p0 < /nova_contrail_dpdk.patch || /bin/true',
-      cwd => '/',
-    }
+#    file {'/nova_contrail_dpdk.patch' :
+#      ensure  => file,
+#      source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/nova_contrail_dpdk.patch',
+#    } ->
+#    exec { 'patch -p0 < nova_contrail_dpdk.patch':
+#      command => '/bin/patch -p0 < /nova_contrail_dpdk.patch || /bin/true',
+#      cwd => '/',
+#    }
   }
   exec { '/sbin/weak-modules --add-kernel' :
     command => '/sbin/weak-modules --add-kernel',
