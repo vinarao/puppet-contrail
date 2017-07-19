@@ -50,10 +50,11 @@ class contrail::config::provision_config (
 ) inherits contrail::params {
 
   if $version < 4 {
+    $uname = inline_template("<%= `uname -n |tr -d '\n'` %>")
     exec { "provision_config_node.py ${config_node_name}" :
       path => '/usr/bin',
       command => "python /opt/contrail/utils/provision_config_node.py \
-                  --host_name ${::fqdn} \
+                  --host_name ${uname} \
                   --host_ip ${config_node_address} \
                   --api_server_ip ${api_address} \
                   --api_server_port ${api_port} \
