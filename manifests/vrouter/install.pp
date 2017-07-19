@@ -15,6 +15,15 @@ class contrail::vrouter::install (
     package { 'contrail-openstack-vrouter' :
       ensure => latest,
     }
+    package { 'contrail-vrouter' :
+      ensure => latest,
+    }
+    package { 'contrail-vrouter-init' :
+      ensure => latest,
+    }
+    package { 'contrail-vrouter-agent' :
+      ensure => latest,
+    }
   } else {
     package { 'contrail-nova-vif' :
       ensure => latest,
