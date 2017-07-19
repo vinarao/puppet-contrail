@@ -16,6 +16,9 @@ class contrail::vrouter::install (
       ensure => latest,
     }
   } else {
+    package { 'contrail-nova-vif' :
+      ensure => latest,
+    }
     package { 'contrail-lib' :
       ensure => latest,
     }
@@ -41,14 +44,6 @@ class contrail::vrouter::install (
       ensure  => file,
       source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/contrail-vrouter.rules',
     } 
-#    file {'/nova_contrail_dpdk.patch' :
-#      ensure  => file,
-#      source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/nova_contrail_dpdk.patch',
-#    } ->
-#    exec { 'patch -p0 < nova_contrail_dpdk.patch':
-#      command => '/bin/patch -p0 < /nova_contrail_dpdk.patch || /bin/true',
-#      cwd => '/',
-#    }
   }
   exec { '/sbin/weak-modules --add-kernel' :
     command => '/sbin/weak-modules --add-kernel',
@@ -69,36 +64,4 @@ class contrail::vrouter::install (
   exec { 'semodule -i /tmp/contrailselinux.pp':
     command => '/sbin/semodule -i /tmp/contrailselinux.pp',
   }
-  #file { '/etc/contrail/contrailhaproxy.te' :
-  #  ensure  => file,
-  #  source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/contrailhaproxy.te',
-  #} ->
-  #exec { 'checkmodule -M -m -o /etc/contrail/contrailhaproxy.mod /etc/contrail/contrailhaproxy.te':
-  #  command => '/bin/checkmodule -M -m -o /etc/contrail/contrailhaproxy.mod /etc/contrail/contrailhaproxy.te',
-  #} ->
-  #exec { 'semodule_package -o /etc/contrail/contrailhaproxy.pp -m /etc/contrail/contrailhaproxy.mod':
-  #  command => '/bin/semodule_package -o /etc/contrail/contrailhaproxy.pp -m /etc/contrail/contrailhaproxy.mod',
-  #} ->
-  #exec { 'semodule -i /etc/contrail/contrailhaproxy.pp':
-  #  command => '/sbin/semodule -i /etc/contrail/contrailhaproxy.pp',
-  #}
-  #file { '/etc/contrail/contrailhaproxy2.te' :
-  #  ensure  => file,
-  #  source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/contrailhaproxy2.te',
-  #} ->
-  #exec { 'checkmodule -M -m -o /etc/contrail/contrailhaproxy2.mod /etc/contrail/contrailhaproxy2.te':
-  #  command => '/bin/checkmodule -M -m -o /etc/contrail/contrailhaproxy2.mod /etc/contrail/contrailhaproxy2.te',
-  #} ->
-  #exec { 'semodule_package -o /etc/contrail/contrailhaproxy2.pp -m /etc/contrail/contrailhaproxy2.mod':
-  #  command => '/bin/semodule_package -o /etc/contrail/contrailhaproxy2.pp -m /etc/contrail/contrailhaproxy2.mod',
-  #} ->
-  #exec { 'semodule -i /etc/contrail/contrailhaproxy2.pp':
-  #  command => '/sbin/semodule -i /etc/contrail/contrailhaproxy2.pp',
-  #}
-
-  #file { '/opt/contrail/utils/update_dev_net_config_files.py' :
-  #  ensure => file,
-  #  source => 'puppet:///modules/contrail/vrouter/update_dev_net_config_files.py',
-  #}
-
 }
