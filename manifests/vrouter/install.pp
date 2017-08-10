@@ -46,9 +46,6 @@ class contrail::vrouter::install (
     package { 'contrail-vrouter-common' :
       ensure => latest,
     }
-    exec { 'ldconfig vrouter agent':
-      command => '/sbin/ldconfig',
-    }
     exec { 'set selinux to permissive' :
       command => '/sbin/setenforce permissive',
     }
@@ -61,7 +58,10 @@ class contrail::vrouter::install (
     file {'/etc/contrail/supervisord_vrouter_files/contrail-vrouter.rules' :
       ensure  => file,
       source => '/usr/share/openstack-puppet/modules/contrail/files/vrouter/contrail-vrouter.rules',
-    } 
+    }
+  }
+  exec { 'ldconfig vrouter agent':
+      command => '/sbin/ldconfig',
   }
   exec { '/sbin/weak-modules --add-kernel' :
     command => '/sbin/weak-modules --add-kernel',
