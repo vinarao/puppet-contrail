@@ -12,9 +12,6 @@ class contrail::vrouter::install (
 ) {
 
   if !$is_dpdk {
-    package { 'contrail-openstack-vrouter' :
-      ensure => latest,
-    }
     package { 'contrail-vrouter' :
       ensure => latest,
     }
