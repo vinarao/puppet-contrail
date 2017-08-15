@@ -2,23 +2,14 @@
 #
 # Install the vrouter service
 #
-# === Parameters:
-#
-# [*package_name*]
-#   (optional) Package name for vrouter
-#
 class contrail::vrouter::install (
   $is_dpdk = undef,
 ) {
-
   if !$is_dpdk {
     package { 'contrail-vrouter' :
       ensure => latest,
     }
     package { 'contrail-vrouter-init' :
-      ensure => latest,
-    }
-    package { 'contrail-vrouter-agent' :
       ensure => latest,
     }
   } else {
@@ -31,18 +22,21 @@ class contrail::vrouter::install (
     package { 'contrail-nodemgr' :
       ensure => latest,
     }
-    package { 'contrail-vrouter-agent' :
-      ensure => latest,
-    }
-    package { 'contrail-utils' :
-      ensure => latest,
-    }
-    package { 'contrail-setup' :
-      ensure => latest,
-    }
-    package { 'contrail-vrouter-common' :
-      ensure => latest,
-    }
+  }
+  package { 'contrail-vrouter-agent' :
+    ensure => latest,
+  }
+  package { 'contrail-utils' :
+    ensure => latest,
+  }
+  package { 'contrail-setup' :
+    ensure => latest,
+  }
+  package { 'contrail-vrouter-common' :
+    ensure => latest,
+  }
+
+  if $is_dpdk {
     exec { 'set selinux to permissive' :
       command => '/sbin/setenforce permissive',
     }
