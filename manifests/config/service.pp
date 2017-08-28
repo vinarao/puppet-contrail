@@ -2,15 +2,9 @@
 #
 # Manage the config service
 #
-# === Parameters:
-#
-# [*container_image*]
-#   (optional) Mandatory in case of container based deployment
-#   Container image to be run
-#
 
 class contrail::config::service(
-  $container_image      = undef,
+  $container_name = undef,
 ) inherits contrail::params {
 
   if $version < 4 {
@@ -24,8 +18,7 @@ class contrail::config::service(
 
     # Container based deployment
 
-    contrail::container::run { 'contrail-controller-container' :
-      container_image => $container_image,
+    contrail::container::run { $container_name :
     }
   }
 }

@@ -15,8 +15,8 @@
 #   (optional) Package name for analytics
 
 class contrail::analytics (
-  $container_image          = $contrail::params::analytics_container_image,
   $container_name           = $contrail::params::analytics_container_name,
+  $container_tag            = $contrail::params::container_tag,
   $container_url            = $contrail::params::container_url,
   $package_name             = $contrail::params::analytics_package_name,
   $alarm_gen_config,
@@ -33,8 +33,8 @@ class contrail::analytics (
 
   anchor {'contrail::analytics::start': } ->
   class {'::contrail::analytics::install':
-    container_image          => $container_image,
     container_name           => $container_name,
+    container_tag            => $container_tag,
     container_url            => $container_url,
   } ->
   class {'::contrail::analytics::config':
@@ -50,7 +50,7 @@ class contrail::analytics (
     vnc_api_lib_config       => $vnc_api_lib_config,
   } ~>
   class {'::contrail::analytics::service':
-    container_image          => $container_image,
+    container_name           => $container_name,
   }
   anchor {'contrail::analytics::end': }
 }

@@ -15,16 +15,16 @@
 #
 class contrail::analyticsdatabase (
   $analyticsdatabase_params = {},
-  $container_image          = $contrail::params::analyticsdb_container_image,
   $container_name           = $contrail::params::analyticsdb_container_name,
+  $container_tag            = $contrail::params::container_tag,
   $container_url            = $contrail::params::container_url,
   $package_name             = $contrail::params::database_package_name,
 ) inherits contrail::params {
 
   anchor {'contrail::analyticsdatabase::start': } ->
   class {'::contrail::analyticsdatabase::install':
-    container_image          => $container_image,
     container_name           => $container_name,
+    container_tag            => $container_tag,
     container_url            => $container_url,
   } ->
   class {'::contrail::analyticsdatabase::config':
@@ -36,7 +36,7 @@ class contrail::analyticsdatabase (
     zookeeper_server_ips    => $analyticsdatabase_params['zookeeper_server_ips'],
   } ~>
   class {'::contrail::analyticsdatabase::service':
-    container_image          => $container_image,
+    container_name           => $container_name,
   }
   anchor {'contrail::analyticsdatabase::end': }
 }

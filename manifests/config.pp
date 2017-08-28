@@ -16,8 +16,8 @@
 #   (optional) Package name for config
 
 class contrail::config (
-  $container_image          = $contrail::params::controller_container_image,
   $container_name           = $contrail::params::controller_container_name,
+  $container_tag            = $contrail::params::container_tag,
   $container_url            = $contrail::params::container_url,
   $package_name             = $contrail::params::config_package_name,
   $api_config,
@@ -33,8 +33,8 @@ class contrail::config (
 
   anchor {'contrail::config::start': } ->
   class {'::contrail::config::install':
-    container_image          => $container_image,
     container_name           => $container_name,
+    container_tag            => $container_tag,
     container_url            => $container_url,
    } ->
   class {'::contrail::config::config':
@@ -49,7 +49,7 @@ class contrail::config (
     vnc_api_lib_config      => $vnc_api_lib_config,
   } ~>
   class {'::contrail::config::service':
-    container_image          => $container_image,
+    container_name           => $container_name,
   }
   anchor {'contrail::config::end': }
 }

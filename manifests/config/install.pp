@@ -2,19 +2,10 @@
 #
 # Install the config service
 #
-# === Parameters:
-#
-# [*container_name*]
-#   (optional) Container name to load,
-#
-# [*container_url*]
-#   Mandatory for container based deployment
-#   URL for downloading container
-#
 
 class contrail::config::install (
-  $container_image          = undef,
   $container_name           = undef,
+  $container_tag            = undef,
   $container_url            = undef,
 ) inherits contrail::params {
 
@@ -30,8 +21,8 @@ class contrail::config::install (
     }
   } else {
      contrail::container::install { $container_name :
-      container_image => $container_image,
-      container_url   => $container_url,
+      container_tag => $container_tag,
+      container_url => $container_url,
     }
   }
 }

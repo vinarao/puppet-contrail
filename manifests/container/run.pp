@@ -2,7 +2,6 @@
 define contrail::container::run (
   $cloud_orchestrator = hiera('contrail_cloud_orchestrator', 'openstack'),
   $container_name     = $title,
-  $container_image    = undef,
 ) {
 
     $docker_net_opts = '--net=host'
@@ -13,7 +12,7 @@ define contrail::container::run (
     $check_cmd = "docker ps --all | grep -q '${container_name}'"
     exec { "create ${container_name} container" :
       path    => '/usr/bin:/usr/sbin:/bin',
-      command => "docker create --name='${container_name}' ${docker_opts} ${container_image}",
+      command => "docker create --name='${container_name}' ${docker_opts} $(docker images | awk '/${container_name}/{print(\$1\":\"\$2)}' | sort -n -r | head -n 1)",
       unless  => $check_cmd,
     } ->
     exec { "start ${container_name} container" :
