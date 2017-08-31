@@ -48,6 +48,7 @@ class contrail::vrouter::install (
     }
     exec { 'set selinux to permissive' :
       command => '/sbin/setenforce permissive',
+      onlyif  => 'sestatus | grep -i "Current mode" | grep -q enforcing',
     }
     file_line { 'make permissive mode persistant':
       ensure => present,
