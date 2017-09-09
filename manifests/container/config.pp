@@ -50,6 +50,11 @@ define contrail::container::config (
 
   $web_http_listen_port           = hiera('contrail::webui::http_port', undef),
   $web_https_listen_port          = hiera('contrail::webui::https_port', undef),
+
+  $strict_compliance              = hiera('contrail::config::strict_compliance', undef),
+
+  $configdb_min_disk_gb           = hiera('contrail_configdb_min_disk_gb', undef),
+  $analyticsdb_min_disk_gb        = hiera('contrail_analyticsdb_min_disk_gb', undef),
 ) {
 
   if $auth_protocol == 'https' {

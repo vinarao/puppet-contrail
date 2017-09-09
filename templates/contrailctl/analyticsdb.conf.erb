@@ -70,6 +70,12 @@ analyticsdb_cassandra_user = <%= @analyticsdb_cassandra_user %>
 analyticsdb_cassandra_password = <%= @analyticsdb_cassandra_password %>
 <% end -%>
 
+# Minimum disk in GB for config DB
+<% if defined?(@analyticsdb_min_disk_gb) && @analyticsdb_min_disk_gb != "" %>
+analyticsdb_minimum_diskgb = <%= @analyticsdb_min_disk_gb %>
+<% end -%>
+
+
 <% if defined?(@cloud_orchestrator) && @cloud_orchestrator == "openstack" %>
 # [KEYSTONE] - Section to get informtion about the keystone to be used by contrail,
 # Required only when orchestration is 'openstack' and keystone is managed

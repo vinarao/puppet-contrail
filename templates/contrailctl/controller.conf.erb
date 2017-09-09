@@ -151,6 +151,12 @@ xmpp_dns_auth_enable = <%= @ssl_enabled %>
 neutron_metadata_ip = <%= @neutron_metadata_ip %>
 <% end -%>
 
+# Minimum disk in GB for config DB
+<% if defined?(@configdb_min_disk_gb) && @configdb_min_disk_gb != ""  %>
+configdb_minimum_diskgb = <%= @configdb_min_disk_gb %>
+<% end -%>
+
+
 #
 # [CONTROLLER] section will have any global configuration for controller container
 # Any configuration here will be passed directly to contrial-ansible-internal
@@ -315,6 +321,12 @@ cloud_admin_role = <%= @cloud_admin_role %>
 <% if defined?(@global_read_only_role) && @global_read_only_role != "" %>
 global_read_only_role = <%= @global_read_only_role %>
 <% end -%>
+<% end -%>
+
+# Run contrail-api to be strictly compliant with neutron.
+# strict_compliance = "false"
+<% if defined?(@strict_compliance) && @strict_compliance != "" %>
+strict_compliance = <%= @strict_compliance %>
 <% end -%>
 
 
