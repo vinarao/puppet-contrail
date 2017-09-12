@@ -38,7 +38,8 @@ class contrail::vrouter::install (
 
   if $is_dpdk {
     exec { 'set selinux to permissive' :
-      command => '/sbin/setenforce permissive',
+      command => 'setenforce permissive',
+      path    => '/bin:/sbin:/usr/bin:/usr/sbin',
       onlyif  => 'sestatus | grep -i "Current mode" | grep -q enforcing',
     }
     file_line { 'make permissive mode persistant':
@@ -80,7 +81,7 @@ class contrail::vrouter::install (
   # (https://major.io/2015/09/18/systemd-in-fedora-22-failed-to-restart-service-access-denied/)
   exec { 'systemctl daemon-reexec':
     command => 'systemctl daemon-reexec || true',
-    path    => '/bin::/sbin:/usr/bin:/usr/sbin',
+    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     onlyif  => 'sestatus | grep -i "Current mode" | grep -q enforcing',
   }
 }
