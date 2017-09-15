@@ -17,8 +17,22 @@ class contrail::config::service(
   } else {
 
     # Container based deployment
+    $db_dir = '/var/lib/configdb'
+    $logs_dir = '/var/log/contrail/controller'
+    $zk_dir = '/var/lib/config_zookeeper_data'
+    $zk_logs_dir = '/var/log/contrail/config_zookeeper'
 
+    $mounts = [
+      "${db_dir}:/var/lib/cassandra",
+      "${logs_dir}:/var/log/contrail",
+      "${zk_dir}:/var/lib/zookeeper",
+      "${zk_logs_dir}:/var/log/zookeeper",
+    ]
+    file { [$db_dir, $logs_dir, $zk_dir, $zk_logs_dir, ] :
+      ensure => 'directory',
+    } ->
     contrail::container::run { $container_name :
+      mounts => $mounts,
     }
   }
 }

@@ -22,8 +22,15 @@ class contrail::analytics::service(
   } else {
 
     # Container based deployment
-
+    $logs_dir = '/var/log/contrail/analytics'
+    $mounts = [
+      "${logs_dir}:/var/log/contrail",
+    ]
+    file { [$logs_dir, ]:
+      ensure => 'directory',
+    } ->
     contrail::container::run { $container_name :
+      mounts => $mounts,
     }
   }
 }

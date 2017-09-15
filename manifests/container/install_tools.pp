@@ -15,7 +15,7 @@ class contrail::container::install_tools {
     ensure => 'running',
     enable => true,
   }->
-  file { '/etc/contrailctl':
+  file { ['/etc/contrailctl', '/var/log/contrail', ]:
     ensure => directory,
   }
 }

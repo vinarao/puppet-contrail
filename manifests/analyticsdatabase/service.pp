@@ -22,8 +22,21 @@ class contrail::analyticsdatabase::service(
   } else {
 
     # Container based deployment
-
+    $db_dir = '/var/lib/analyticsdb'
+    $logs_dir = '/var/log/contrail/analyticsdb'
+    $zk_dir = '/var/lib/analyticsdb_zookeeper_data'
+    $zk_logs_dir = '/var/log/contrail/analyticsdb_zookeeper'
+    $mounts = [
+      "${db_dir}:/var/lib/cassandra",
+      "${logs_dir}:/var/log/contrail",
+      "${zk_dir}:/var/lib/zookeeper",
+      "${zk_logs_dir}:/var/log/zookeeper",
+    ]
+    file { [$db_dir, $logs_dir, $zk_dir, $zk_logs_dir, ] :
+      ensure => 'directory',
+    } ->
     contrail::container::run { $container_name :
+      mounts => $mounts,
     }
   }
 }
