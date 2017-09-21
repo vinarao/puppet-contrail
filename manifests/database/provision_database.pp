@@ -39,17 +39,14 @@
 class contrail::database::provision_database (
   $api_address                = '127.0.0.1',
   $api_port                   = 8082,
-  $database_node_address      = $host_ip,
-  $database_node_name         = $::hostname,
+  $database_node_address       = $host_ip,
+  $database_node_name          = $::hostname,
   $keystone_admin_user        = 'admin',
   $keystone_admin_password    = 'password',
   $keystone_admin_tenant_name = 'admin',
   $oper                       = 'add',
   $openstack_vip              = '127.0.0.1',
-) inherits contrail::params {
-
-if $version < 4 {
-
+) {
   $uname = inline_template("<%= `uname -n |tr -d '\n'` %>")
   exec { "provision_database_node.py ${control_node_name}" :
     path => '/usr/bin',
@@ -65,11 +62,5 @@ if $version < 4 {
                  --oper ${oper}",
     tries => 100,
     try_sleep => 3,
-  }
-  } else {
-
-    # Container based deployment
-
-    notify { 'Skip Contrail provision database step in container based deployment': }
   }
 }

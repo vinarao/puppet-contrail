@@ -36,43 +36,31 @@
 #   (optional) Operation to run (add|del)
 #   Defaults to 'add'
 #
-
 class contrail::database::provision_database (
   $api_address                = '127.0.0.1',
   $api_port                   = 8082,
-  $database_node_address      = $host_ip,
-  $database_node_name         = $::hostname,
+  $database_node_address       = $host_ip,
+  $database_node_name          = $::hostname,
   $keystone_admin_user        = 'admin',
   $keystone_admin_password    = 'password',
   $keystone_admin_tenant_name = 'admin',
   $oper                       = 'add',
   $openstack_vip              = '127.0.0.1',
-) inherits contrail::params {
-
-  if $version < 4 {
-
-    # Package based deployment
-
-    $uname = inline_template("<%= `uname -n |tr -d '\n'` %>")
-    exec { "provision_database_node.py ${control_node_name}" :
-      path => '/usr/bin',
-      command => "python /opt/contrail/utils/provision_database_node.py \
-                   --host_name ${uname} \
-                   --host_ip ${database_node_address} \
-                   --api_server_ip ${api_address} \
-                   --api_server_port ${api_port} \
-                   --admin_user ${keystone_admin_user} \
-                   --admin_password ${keystone_admin_password} \
-                   --admin_tenant ${keystone_admin_tenant_name} \
-                   --openstack_ip ${openstack_vip} \
-                   --oper ${oper}",
-      tries => 100,
-      try_sleep => 3,
-    }
-  } else {
-
-    # Container based deployment
-
-    notify { 'Skip Contrail-Analytics-Database provisioning step in container based deployment': }
+) {
+  $uname = inline_template("<%= `uname -n |tr -d '\n'` %>")
+  exec { "provision_database_node.py ${control_node_name}" :
+    path => '/usr/bin',
+    command => "python /opt/contrail/utils/provision_database_node.py \
+                 --host_name ${uname} \
+                 --host_ip ${database_node_address} \
+                 --api_server_ip ${api_address} \
+                 --api_server_port ${api_port} \
+                 --admin_user ${keystone_admin_user} \
+                 --admin_password ${keystone_admin_password} \
+                 --admin_tenant ${keystone_admin_tenant_name} \
+                 --openstack_ip ${openstack_vip} \
+                 --oper ${oper}",
+    tries => 100,
+    try_sleep => 3,
   }
 }

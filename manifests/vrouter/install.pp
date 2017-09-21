@@ -2,41 +2,51 @@
 #
 # Install the vrouter service
 #
+# === Parameters:
+#
+# [*package_name*]
+#   (optional) Package name for vrouter
+#
 class contrail::vrouter::install (
   $is_dpdk = undef,
+  $contrail_version,
 ) {
+
+  $common_pkgs = [
+    'contrail-nova-vif',
+    'contrail-vrouter-agent',
+  ]
+  $no_dpdk_common_pkgs = [
+    'contrail-vrouter',
+    'contrail-vrouter-init',
+  ]
+  $v4_pkgs = [
+    'contrail-lib',
+    'contrail-nodemgr',
+    'contrail-utils',
+    'contrail-setup',
+    'contrail-vrouter-common',
+  ]
+  $v3_no_dpdk_pkgs = [
+    'contrail-openstack-vrouter',
+  ]
+
+  if $contrail_version < 4 {
+    $ver_pkgs = $v3_no_dpdk_pkgs
+  } else {
+    $ver_pkgs = $v4_pkgs
+  }
+
   if !$is_dpdk {
-    package { 'contrail-vrouter' :
-      ensure => latest,
-    }
-    package { 'contrail-vrouter-init' :
+    $pkgs = concat($no_dpdk_common_pkgs, concat($common_pkgs, $ver_pkgs))
+    package { $pkgs :
       ensure => latest,
     }
   } else {
-    package { 'contrail-nova-vif' :
+    $pkgs = concat($common_pkgs, $ver_pkgs)
+    package { $pkgs :
       ensure => latest,
-    }
-    package { 'contrail-lib' :
-      ensure => latest,
-    }
-    package { 'contrail-nodemgr' :
-      ensure => latest,
-    }
-  }
-  package { 'contrail-vrouter-agent' :
-    ensure => latest,
-  }
-  package { 'contrail-utils' :
-    ensure => latest,
-  }
-  package { 'contrail-setup' :
-    ensure => latest,
-  }
-  package { 'contrail-vrouter-common' :
-    ensure => latest,
-  }
-
-  if $is_dpdk {
+    } ->
     exec { 'set selinux to permissive' :
       command => 'setenforce permissive',
       path    => '/bin:/sbin:/usr/bin:/usr/sbin',
@@ -54,13 +64,16 @@ class contrail::vrouter::install (
     }
   }
   exec { 'ldconfig vrouter agent':
-      command => '/sbin/ldconfig',
+    command => '/sbin/ldconfig',
+  } ->
+  exec { 'enable vrouter supervisor daemon':
+    command => '/bin/systemctl enable supervisor-vrouter',
   } ->
   exec { '/sbin/weak-modules --add-kernel' :
     command => '/sbin/weak-modules --add-kernel',
   } ->
   group { 'nogroup':
-      ensure => present,
+    ensure => present,
   } ->
   file { '/tmp/contrailselinux.te' :
     ensure  => file,
