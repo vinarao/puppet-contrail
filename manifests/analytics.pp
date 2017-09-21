@@ -13,6 +13,7 @@ class contrail::analytics (
   $analytics_api_config,
   $analytics_nodemgr_config,
   $collector_config,
+  $contrail_version,
   $keystone_config,
   $query_engine_config,
   $snmp_collector_config,
@@ -22,7 +23,9 @@ class contrail::analytics (
 ) inherits contrail::params {
 
   anchor {'contrail::analytics::start': } ->
-  class {'::contrail::analytics::install': } ->
+  class {'::contrail::analytics::install': 
+    contrail_version => $contrail_version,
+  } ->
   class {'::contrail::analytics::config': 
     alarm_gen_config         => $alarm_gen_config,
     analytics_api_config     => $analytics_api_config,

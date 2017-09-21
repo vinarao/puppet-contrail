@@ -8,6 +8,7 @@
 #   (optional) Package name for vrouter
 #
 class contrail::vrouter (
+  $contrail_version,
   $discovery_ip,
   $gateway,
   $host_ip,
@@ -27,10 +28,12 @@ class contrail::vrouter (
 
   anchor {'contrail::vrouter::start': } ->
   class {'::contrail::vrouter::install': 
-    is_dpdk => $is_dpdk,
+    is_dpdk          => $is_dpdk,
+    contrail_version => $contrail_version,
   } ->
   class {'::contrail::vrouter::config':
     compute_device         => $physical_interface,
+    contrail_version       => $contrail_version,
     device                 => $physical_interface,
     discovery_ip           => $discovery_ip,
     gateway                => $gateway,
