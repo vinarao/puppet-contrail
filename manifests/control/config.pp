@@ -27,6 +27,7 @@ class contrail::control::config (
   $secret,
   $dns_config             = {},
   $control_config         = {},
+  $contrail_version       = '',
   $control_nodemgr_config = {},
   $manage_named           = 'true',
   $forwarder              = '8.8.8.8',

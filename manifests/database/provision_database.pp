@@ -47,7 +47,6 @@ class contrail::database::provision_database (
   $oper                       = 'add',
   $openstack_vip              = '127.0.0.1',
 ) {
-
   $uname = inline_template("<%= `uname -n |tr -d '\n'` %>")
   exec { "provision_database_node.py ${control_node_name}" :
     path => '/usr/bin',

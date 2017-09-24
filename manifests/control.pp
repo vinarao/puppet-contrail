@@ -9,6 +9,7 @@
 #
 class contrail::control (
   $control_config         = {},
+  $contrail_version       = '',
   $control_nodemgr_config = {},
   $dns_config             = {},
   $package_name           = $contrail::params::control_package_name,
@@ -19,6 +20,7 @@ class contrail::control (
   anchor {'contrail::control::start': } ->
   class {'::contrail::control::install': } ->
   class {'::contrail::control::config':
+    contrail_version       => $contrail_version,
     control_config         => $control_config,
     control_nodemgr_config => $control_nodemgr_config,
     dns_config             => $dns_config,
