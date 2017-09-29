@@ -43,10 +43,15 @@ class contrail::webui::config (
   $admin_tenant_name         = 'admin',
   $auth_port                 = '5000',
   $auth_protocol             = 'http',
+  $auth_version              = 2,
   $cert_file                 = '',
 ) {
 
   $contrail_vip = $contrail_config_vip
+  $identity_manager_api_version = $auth_version ? {
+    2       => 'v2.0',
+    default => 'v3',
+  }
   file { '/etc/contrail/config.global.js' :
     ensure  => file,
     content => template('contrail/config.global.js.erb'),
