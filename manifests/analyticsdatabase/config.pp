@@ -45,9 +45,11 @@ class contrail::analyticsdatabase::config (
     mode   => '0755',
   } ->
   class {'::cassandra':
+    package_name      => 'cassandra',
+    hints_directory   => '/var/lib/cassandra/hints',
 #    service_ensure => stopped,
 #    service_enable => false,
-    settings => {
+    settings          => {
       'cluster_name'          => 'ContrailAnalytics',
       'listen_address'        => $cassandra_ip,
       'storage_port'          => $storage_port,
