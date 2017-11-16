@@ -20,6 +20,12 @@ class contrail::analytics (
   $redis_config,
   $topology_config,
   $vnc_api_lib_config,
+  $rabbitmq_server_list,
+  $rabbitmq_port,
+  $rabbitmq_vhost,
+  $rabbitmq_user,
+  $rabbitmq_password,
+  $config_db_server_list,
 ) inherits contrail::params {
 
   anchor {'contrail::analytics::start': } ->
@@ -37,6 +43,12 @@ class contrail::analytics (
     snmp_collector_config    => $snmp_collector_config,
     topology_config          => $topology_config,
     vnc_api_lib_config       => $vnc_api_lib_config,
+    rabbitmq_server_list     => $rabbitmq_server_list,
+    rabbitmq_port            => $rabbitmq_port,
+    rabbitmq_vhost           => $rabbitmq_vhost,
+    rabbitmq_user            => $rabbitmq_user,
+    rabbitmq_password        => $rabbitmq_password,
+    config_db_server_list    => $config_db_server_list,
   } ~>
   class {'::contrail::analytics::service': }
   anchor {'contrail::analytics::end': }
