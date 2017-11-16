@@ -39,6 +39,11 @@ class contrail::analytics::config (
   $redis_config,
   $topology_config          = {},
   $vnc_api_lib_config       = {},
+  $rabbitmq_server_list,
+  $rabbitmq_port,
+  $rabbitmq_vhost,
+  $rabbitmq_user,
+  $rabbitmq_password,
 ) {
   file { '/etc/contrail/contrail-keystone-auth.conf':
     ensure => file,
@@ -70,7 +75,18 @@ class contrail::analytics::config (
     match   => "^bind.*$",
   }
 
-  create_ini_settings($alarm_gen_config, $contrail_alarm_gen_config)
+  $config_data = {
+    'DEFAULTS'  => {
+      'rabbitmq_server_list'  => $rabbitmq_server_list,
+      'rabbitmq_port'         => $rabbitmq_port,
+      'rabbitmq_vhost'        => $rabbitmq_vhost,
+      'rabbitmq_user'         => $rabbitmq_user,
+      'rabbitmq_password'     => $rabbitmq_password,
+      }
+  }
+  $merged_alarm_gen_config = merge($alarm_gen_config, $config_data)
+
+  create_ini_settings($merged_alarm_gen_config, $contrail_alarm_gen_config)
   create_ini_settings($analytics_api_config, $contrail_analytics_api_config)
   create_ini_settings($analytics_nodemgr_config, $contrail_analytics_nodemgr_config)
   create_ini_settings($collector_config, $contrail_collector_config)
