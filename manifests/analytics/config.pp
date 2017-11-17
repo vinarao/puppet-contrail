@@ -76,7 +76,7 @@ class contrail::analytics::config (
   }
 
   $config_data = {
-    'DEFAULTS'  => {
+    'DEFAULTS' => {
       'rabbitmq_server_list'  => $rabbitmq_server_list,
       'rabbitmq_port'         => $rabbitmq_port,
       'rabbitmq_vhost'        => $rabbitmq_vhost,
@@ -84,7 +84,7 @@ class contrail::analytics::config (
       'rabbitmq_password'     => $rabbitmq_password,
       }
   }
-  $merged_alarm_gen_config = merge($alarm_gen_config, $config_data)
+  $merged_alarm_gen_config = deep_merge($alarm_gen_config, $config_data)
 
   create_ini_settings($merged_alarm_gen_config, $contrail_alarm_gen_config)
   create_ini_settings($analytics_api_config, $contrail_analytics_api_config)
