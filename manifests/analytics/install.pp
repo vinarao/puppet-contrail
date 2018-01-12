@@ -13,19 +13,16 @@ class contrail::analytics::install (
   if $contrail_version == 3 {
     package { 'python-redis' :
       ensure => absent,
-    } ->
-    package { 'python-gevent' :
-      ensure => latest,
-    } ->
-    package { 'contrail-openstack-analytics' :
-      ensure => latest,
+      before => Package['python-gevent'],
     }
-  } else {
-    package { 'python-gevent' :
-      ensure => latest,
-    } ->
-    package { 'contrail-openstack-analytics' :
-      ensure => latest,
-    }
+  }
+  package { 'python-gevent' :
+    ensure => latest,
+  } ->
+  package { 'contrail-openstack-analytics' :
+    ensure => latest,
+  } ->
+  package { 'contrail-docs' :
+    ensure => latest,
   }
 }
