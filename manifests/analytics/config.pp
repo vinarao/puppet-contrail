@@ -44,6 +44,7 @@ class contrail::analytics::config (
   $rabbitmq_vhost,
   $rabbitmq_user,
   $rabbitmq_password,
+  $rabbit_ssl_config        = {},
   $config_db_cql_server_list,
   $config_db_server_list,
 ) {
@@ -79,7 +80,10 @@ class contrail::analytics::config (
 
   $rabbit_server = split($rabbitmq_server_list, ',')
   $rabbit_server_list_port = join([join($rabbit_server, ":${rabbitmq_port} "),":${rabbitmq_port}"],'')
-  $config_data_port_separately = {
+  $config_ssl = {
+    'CONFIGDB'  => $rabbit_ssl_config,
+  }
+  $config_data_port_separately_wo_ssl = {
     'CONFIGDB'  => {
       'rabbitmq_server_list'  => $rabbitmq_server_list,
       'rabbitmq_port'         => $rabbitmq_port,
@@ -89,6 +93,7 @@ class contrail::analytics::config (
       'config_db_server_list' => $config_db_server_list,
       }
   }
+  $config_data_port_separately = deep_merge($config_data_port_separately_wo_ssl, $config_ssl)
   $config_data = {
     'CONFIGDB'  => {
       'rabbitmq_server_list'  => $rabbit_server_list_port,

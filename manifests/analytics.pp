@@ -25,6 +25,7 @@ class contrail::analytics (
   $rabbitmq_vhost,
   $rabbitmq_user,
   $rabbitmq_password,
+  $rabbit_ssl_config = {},
   $config_db_cql_server_list,
   $config_db_server_list,
 
@@ -50,6 +51,7 @@ class contrail::analytics (
     rabbitmq_vhost            => $rabbitmq_vhost,
     rabbitmq_user             => $rabbitmq_user,
     rabbitmq_password         => $rabbitmq_password,
+    rabbit_ssl_config         => $rabbit_ssl_config,
     config_db_cql_server_list => $config_db_cql_server_list,
     config_db_server_list     => $config_db_server_list,
   } ~>
